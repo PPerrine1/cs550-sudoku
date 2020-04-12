@@ -8,14 +8,23 @@ def AC3(csp, queue=None, removals=None):
     Pseudocode:
     AC3(CSP):
         “CSP(variables X, domains D, constraints C)”
+
+        # Generate Queue using the constraint function
+        in CSP. Binary arcs are binary tuples. The Queue
+        should contain every possible combination of squares
+        for each empty square's row and column. This function 
+        will weed out any values that have been used on the same
+        row and column and remove them from the domain of the 
+        empty square.
+
         q = Queue(binary arcs in CSP)
         while not q.empty():
-        (Xi, Xj) = q.dequeue() # get binary constraint
-        if revise(CSP, Xi, Xj):
-            if domain(Xi) =  return False
-            else:
-                for each Xk in {neighbors(Xi)‐ Xj}:
-                    q.enqueue(Xk, Xi)
+            (Xi, Xj) = q.dequeue() # get binary constraint
+            if revise(CSP, Xi, Xj):
+                if domain(Xi) =  return False
+                else:
+                    for each Xk in {neighbors(Xi)‐ Xj}:
+                        q.enqueue(Xk, Xi)
         return True
 
     revise(CSP, Xi, Xj):
