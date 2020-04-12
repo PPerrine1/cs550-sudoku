@@ -13,6 +13,28 @@ def backtracking_search(csp,
     a function handle for selecting variables, 
     a function handle for selecting elements of a domain,
     and a set of inferences, solve the CSP using backtrack search
+
+    Pseudocode:
+    def backtracking‐search(CSP):
+        return backtrack({}, CSP); # call w/ no assignments
+
+    def backtrack(assignment, CSP):
+        if all variables assigned, return assignment
+        var = select‐unassigned‐variable(CSP, assignment)
+        for each value in order‐domain‐values(var, assignment, csp):
+            if value consistent with assignment:
+                assignment.add({var = value})
+                # propagate new constraints (will work without, but probably slowly)
+                inferences = inference(CSP, var, assignment)
+                if inferences  failure:
+                    assignment.add(inferences)
+                    result = backtrack(assignment, CSP)
+                    if result  failure, return result
+        # either value inconsistent or further exploration failed
+        # restore assignment to its state at top of loop and try next value
+        assignment.remove({var = value}, inferences)
+        # No value was consistent with the constraints
+        return failure
     """
     
     # See Figure 6.5] of your book for details
