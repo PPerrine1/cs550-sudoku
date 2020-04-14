@@ -12,6 +12,7 @@ def first(iterable, default=None):
     except TypeError:
         return next(iterable, default)
 
+
 def is_in(elt, seq):
     """Similar to (elt in seq), but compares with 'is', not '=='."""
     return any(x is elt for x in seq)

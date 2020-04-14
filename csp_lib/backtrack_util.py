@@ -10,15 +10,18 @@ identity = lambda x: x
 argmin = min
 argmax = max
 
+
 def argmin_random_tie(seq, key=identity):
     """Return a minimum element of seq; break ties at random."""
     return argmin(shuffled(seq), key=key)
+
 
 def shuffled(iterable):
     """Randomly shuffle a copy of iterable."""
     items = list(iterable)
     random.shuffle(items)
     return items
+
 
 # Variable ordering
 
@@ -41,6 +44,7 @@ def num_legal_values(csp, var, assignment):
         return count(csp.nconflicts(var, val, assignment) == 0
                      for val in csp.domains[var])
 
+
 # Value ordering
 
 
@@ -53,6 +57,7 @@ def lcv(var, assignment, csp):
     """Least-constraining-values heuristic."""
     return sorted(csp.choices(var),
                   key=lambda val: csp.nconflicts(var, val, assignment))
+
 
 # Inference
 
@@ -76,4 +81,3 @@ def forward_checking(csp, var, value, assignment, removals):
 def mac(csp, var, value, assignment, removals):
     """Maintain arc consistency."""
     return AC3(csp, [(X, var) for X in csp.neighbors[var]], removals)
-

@@ -1,8 +1,7 @@
-
-
-from csp_lib.backtrack_util import (first_unassigned_variable, 
+from csp_lib.backtrack_util import (first_unassigned_variable,
                                     unordered_domain_values,
                                     no_inference)
+
 
 def backtracking_search(csp,
                         select_unassigned_variable=first_unassigned_variable,
@@ -36,7 +35,7 @@ def backtracking_search(csp,
         # No value was consistent with the constraints
         return failure
     """
-    
+
     # See Figure 6.5] of your book for details
 
     def backtrack(assignment):
@@ -44,8 +43,9 @@ def backtracking_search(csp,
         Returns None if there is no solution.  Otherwise, the
         csp should be in a goal state.
         """
-        
-        raise notImplemented
+
+
+        raise NotImplementedError
 
     # Call with empty assignments, variables accessed
     # through dynamic scoping (variables in outer

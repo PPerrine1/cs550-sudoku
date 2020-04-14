@@ -1,8 +1,12 @@
-'''
+"""
 Constraint propagation
-'''
+"""
 
-def AC3(csp, queue=None, removals=None):
+from queue import Queue
+import copy
+
+
+def AC3(sudoku, queue=None, removals=None):
     """AC3 constraint propagation
     
     Pseudocode:
@@ -26,7 +30,31 @@ def AC3(csp, queue=None, removals=None):
                     for each Xk in {neighbors(Xi)‐ Xj}:
                         q.enqueue(Xk, Xi)
         return True
+    """
+    q = Queue()
+    unitList = [sudoku.boxes, sudoku.rows, sudoku.cols]
 
+    for unit in unitList:
+        for u in unit:
+            for i, val in enumerate(u):
+                if val == 0:
+                    cpyU = copy.deepcopy(u)
+                    cpyU.pop(i)
+                    for j in cpyU:
+                        q.put(u(i), u(j))
+    while not q.empty():
+        (xi, xj) = q.get()  # get binary constraint
+        if revise(sudoku.csp, xi, xj):
+            if sudoku.csp.domains(xi) is None:
+                return False
+            else:
+                cpyNeighbors = copy.deepcopy(sudoku.csp.neighbors)
+                cpyNeighbors.remove(xj)
+                for xk in cpyNeighbors:
+                    q.put(xk, xi)
+    return True
+
+    """
     revise(CSP, Xi, Xj):
         revised = False
         for each x in domain(Xi):
@@ -37,12 +65,23 @@ def AC3(csp, queue=None, removals=None):
         return revised
 
     """
-    
+
+
+def revise(csp, xi, xj):
+    revised = False
+    for x in csp.domains(xi):
+        conHeld = False
+        for y in csp.domains(xj):
+            conHeld = (x != y)
+            if conHeld:
+                break
+        if not conHeld:
+            csp.domains(xi).remove(x)
+            revised = True
+    return revised
+
     # Hints:
     # Remember that:
     #    csp.variables is a list of variables
     #    csp.neighbors[x] is the neighbors of variable x
-    
-    raise NotImplemented
-
 

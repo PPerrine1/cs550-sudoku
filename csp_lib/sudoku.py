@@ -6,6 +6,7 @@ from functools import reduce
 
 from .csp import CSP
 
+
 def flatten(seqs):
     """flatten(seqs)
     Flattens objects in 
@@ -17,11 +18,9 @@ easy1 = '..3.2.6..9..3.5..1..18.64....81.29..7.......8..67.82....26.95..8..2.3..
 harder1 = '4173698.5.3..........7......2.....6.....8.4......1.......6.3.7.5..2.....1.4......'
 
 
-
 def different_values_constraint(_A, a, _B, b):
     """A constraint saying two neighboring variables must differ in value."""
     return a != b
-
 
 
 class Sudoku(CSP):
@@ -106,16 +105,13 @@ class Sudoku(CSP):
     If solved is True, the puzzle can be displayed with as above.
     """
 
-    
-    R3 = list(range(3)) # All Sudoku puzzles use 3x3 grids, one side
-    
-    
-    
+    R3 = list(range(3))  # All Sudoku puzzles use 3x3 grids, one side
+
     def __init__(self, grid):
         """Build a Sudoku problem from a string representing the grid:
         the digits 1-9 denote a filled cell, '.' or '0' an empty one;
         other characters are ignored."""
-        
+
         # Generate board of fixed size 3x3 sets of 3x3 boxes
         # Use Cell to generate integers for each box (variables are numbers)
         self.Cell = itertools.count().__next__
@@ -142,21 +138,21 @@ class Sudoku(CSP):
         #  The final two dimensions are the row and column
         #  within the box.  self.bgrid[2][2][0][1] = 73
         self.bgrid = [[
-                       # one box            
-                       [[self.Cell() for _x in self.R3] for _y in self.R3]
-                       # series of boxes bx, by  
-                       for _bx in self.R3
-                      ] 
-                      for _by in self.R3
-                     ]
+            # one box
+            [[self.Cell() for _x in self.R3] for _y in self.R3]
+            # series of boxes bx, by
+            for _bx in self.R3
+        ]
+            for _by in self.R3
+        ]
         # list of variables in each box, self.boxes[0] = [0, 1, ... 8] 
         self.boxes = flatten([list(map(flatten, brow)) for brow in self.bgrid])
         # list of variables in each row 
         # self.rows[0] = [0, 1, 2, 9, 10, 11, 18, 19, 20]
         self.rows = flatten([list(map(flatten, zip(*brow))) for brow in self.bgrid])
         # list of variables in each column
-        self.cols = list(zip(*self.rows)) 
-        
+        self.cols = list(zip(*self.rows))
+
         # Build the neighbors list
         # It should be implemented as a dictionary.
         # Keys are the variables names (numbers) and values are a set
@@ -168,7 +164,7 @@ class Sudoku(CSP):
         # 
         # See Python library reference if you are not familiar with sets
         # Tutorial:  https://www.learnpython.org/en/Sets
-        
+
         # Build dictionary of list of variables
         self.neighbors = {v: set() for v in flatten(self.rows)}
         # Populate with all variables that are neighbors of the 
@@ -176,14 +172,14 @@ class Sudoku(CSP):
         for unit in map(set, self.boxes + self.rows + self.cols):
             for v in unit:
                 self.neighbors[v].update(unit - {v})
-                
+
         squares = iter(re.findall(r'\d|\.', grid))
         domains = {var: [ch] if ch in '123456789' else '123456789'
                    for var, ch in zip(flatten(self.rows), squares)}
         for _ in squares:
             raise ValueError("Not a Sudoku grid", grid)  # Too many squares
         CSP.__init__(self, None, domains, self.neighbors, different_values_constraint)
-        
+
         self.support_pruning()
 
     def display(self, assignment):
@@ -193,6 +189,7 @@ class Sudoku(CSP):
 
         def abut(lines1, lines2): return list(
             map(' | '.join, list(zip(lines1, lines2))))
+
         print('\n------+-------+------\n'.join(
             '\n'.join(reduce(
                 abut, map(show_box, brow))) for brow in self.bgrid))
