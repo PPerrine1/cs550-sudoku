@@ -25,10 +25,10 @@ def backtracking_search(csp,
                 assignment.add({var = value})
                 # propagate new constraints (will work without, but probably slowly)
                 inferences = inference(CSP, var, assignment)
-                if inferences  failure:
+                if inferences != failure:
                     assignment.add(inferences)
                     result = backtrack(assignment, CSP)
-                    if result  failure, return result
+                    if result != failure, return result
         # either value inconsistent or further exploration failed
         # restore assignment to its state at top of loop and try next value
         assignment.remove({var = value}, inferences)
@@ -44,8 +44,26 @@ def backtracking_search(csp,
         csp should be in a goal state.
         """
 
-
-        raise NotImplementedError
+        if select_unassigned_variable is None:
+            return assignment
+        
+        var = select_unassigned_variable(csp, assignment)
+        for value in order_domain_values(var, assignment, csp):
+            if not nconflicts(var, value, assignment):
+                assignment.add({var = value})
+                # propagate new constraints (will work without, but probably slowly)
+                # What is an inference??
+                inferences = inference(csp, var, assignment)
+                if inferences:
+                    assignment.add(inferences)
+                    result = backtrack(assignment, csp)
+                    if result: 
+                        return result
+        # either value inconsistent or further exploration failed
+        # restore assignment to its state at top of loop and try next value
+        assignment.remove({var = value}, inferences)
+        # No value was consistent with the constraints
+        return failure
 
     # Call with empty assignments, variables accessed
     # through dynamic scoping (variables in outer
