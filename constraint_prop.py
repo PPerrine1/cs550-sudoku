@@ -18,10 +18,10 @@ def AC3(csp, queue=None, removals=None):
     while queue:
         (xi, xj) = queue.pop()  # get binary constraint
         if revise(csp, xi, xj, removals):
-            if csp.domains[xi] is None:
+            if csp.curr_domains[xi] is None:
                 return False
             else:
-                tmp = csp.neighbors[xi].remove(xj)
+                csp.neighbors[xi].remove(xj)
                 for xk in csp.neighbors[xi]:
                     queue.append((xk, xi))
                 csp.neighbors[xi].add(xj)
@@ -40,9 +40,4 @@ def revise(csp, xi, xj, removals):
             csp.prune(xi, x, removals)
             revised = True
     return revised
-
-    # Hints:
-    # Remember that:
-    #    csp.variables is a list of variables
-    #    csp.neighbors[x] is the neighbors of variable x
 
