@@ -1,3 +1,18 @@
+"""
+Filename: checkers.py
+
+Checkers driver class for Checkers AI
+
+Contains the Game function, which operates the game of checkers with
+two AI's or a human versus an AI, depending on the starting variables.
+Also prints the checkers board along with player and turn information.
+
+Contains the main function to run Game.
+
+CS 550, Spring 2020, Marie Roch
+@author: mroch, nmill, pperr
+"""
+
 from csp_lib.backtrack_util import (first_unassigned_variable,
                                     unordered_domain_values,
                                     no_inference)
@@ -12,7 +27,6 @@ def backtracking_search(csp,
     a function handle for selecting variables, 
     a function handle for selecting elements of a domain,
     and a set of inferences, solve the CSP using backtrack search"""
-    # See Figure 6.5] of your book for details
 
     def backtrack(assignment):
         """Attempt to backtrack search with current assignment
@@ -30,7 +44,6 @@ def backtracking_search(csp,
             if csp.nconflicts(var, value, assignment) == 0:
                 csp.assign(var, value, assignment)
                 # propagate new constraints (will work without, but probably slowly)
-                # What is an inference??
                 removals = csp.suppose(var, value)
                 inferences = inference(csp, var, value, assignment, removals)
                 if inferences:

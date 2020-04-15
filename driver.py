@@ -1,3 +1,16 @@
+"""
+Filename: driver.py
+
+Driver class for Sudoku AI
+
+Demonstrates functionality of the Sudoku class, the backtracking
+search function, and the AC3 function. Contains an easy and hard
+puzzle for the AI solve.
+
+CS 550, Spring 2020, Marie Roch
+@author: mroch, nmill, pperr
+"""
+
 from csp_lib.sudoku import (Sudoku, easy1, harder1)
 from constraint_prop import AC3
 from csp_lib.backtrack_util import (mrv, lcv, forward_checking, mac)
