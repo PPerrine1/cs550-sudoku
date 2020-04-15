@@ -12,13 +12,10 @@ def AC3(csp, queue=None, removals=None):
             for j in csp.neighbors[i]:
                 queue.append((i, j))
 
-    if not removals:
-        removals = []
-
     while queue:
         (xi, xj) = queue.pop()  # get binary constraint
         if revise(csp, xi, xj, removals):
-            if csp.curr_domains[xi] is None:
+            if not csp.curr_domains[xi]:
                 return False
             else:
                 csp.neighbors[xi].remove(xj)

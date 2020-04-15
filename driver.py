@@ -14,7 +14,6 @@ for puzzle in [easy1, harder1]:
     if not s.goal_test(s.curr_domains):
         print("AC3 fails. Running a backtracking search to solve puzzle:")
         solution = backtracking_search(s, select_unassigned_variable=mrv,
-                                       order_domain_values=lcv,
                                        inference=mac)
     else:
         print("After AC3 constraint propagation:")
