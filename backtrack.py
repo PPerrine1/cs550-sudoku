@@ -1,13 +1,12 @@
 """
-Filename: checkers.py
+Filename: backtrack.py
 
-Checkers driver class for Checkers AI
+Contains the backtracking search function for the Sudoku AI.
 
-Contains the Game function, which operates the game of checkers with
-two AI's or a human versus an AI, depending on the starting variables.
-Also prints the checkers board along with player and turn information.
-
-Contains the main function to run Game.
+Implements the Backtracking Search Algorithm from the 
+Russell & Norvig text. It is modular in that it allows for differing 
+functions for selecting unassigned variables, ordering domain
+values, and inference finding to be passed as parameters.
 
 CS 550, Spring 2020, Marie Roch
 @author: mroch, nmill, pperr
@@ -33,29 +32,42 @@ def backtracking_search(csp,
         Returns None if there is no solution.  Otherwise, the
         csp should be in a goal state.
         """
+
+        # Checks if the assignmen is already complete
         if len(assignment) == 81:
             return assignment
 
+        # Selects unassigned variable
         var = select_unassigned_variable(assignment, csp)
         if var is None:
             return assignment
 
+        # For every domain value of the unassisnged variable, determine the conflicts,
+        # create the list of inferences, and remove any that fail the constraint
         for value in order_domain_values(var, assignment, csp):
             if csp.nconflicts(var, value, assignment) == 0:
                 csp.assign(var, value, assignment)
-                # propagate new constraints (will work without, but probably slowly)
+
+                # propagate new constraints 
                 removals = csp.suppose(var, value)
                 inferences = inference(csp, var, value, assignment, removals)
+
+                # If inferences are found, deteremine a partial assignment add it to the
+                # assignment and call backtrack recursively on the new assignment
                 if inferences:
                     infer = csp.infer_assignment()[var]
                     csp.assign(var, infer, assignment)
                     curr_result = backtrack(assignment)
+
+                    # If the assignment was successful, return it. Else, remove it
                     if curr_result:
                         return curr_result
-        # either value inconsistent or further exploration failed
-        # restore assignment to its state at top of loop and try next value
+
+                # either value inconsistent or further exploration failed
+                # restore assignment to its state at top of loop and try next value
                 csp.unassign(var, assignment)
                 csp.restore(removals)
+
         # No value was consistent with the constraints
         return None
 
@@ -64,6 +76,7 @@ def backtracking_search(csp,
     # scope can be accessed in Python)
     result = backtrack({})
 
+    # Determine the validity of the generated assignment
     success = csp.goal_test(result)
     assert result is None or csp.goal_test(result)
     return result

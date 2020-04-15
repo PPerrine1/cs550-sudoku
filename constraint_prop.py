@@ -1,10 +1,11 @@
 """
 Filename: constraint_prop.py
 
-Contains the AC3 function, which implements the AC-3
-Arc Consistency Algorithm from the Russell & Norvig text. 
-This function allows for a given CSP object to obtain
-network arc consistency.
+Contains the AC3 function for the Sudoku AI.
+
+Implements the AC-3 Arc Consistency Algorithm from the 
+Russell & Norvig text. This function allows for a given 
+CSP object to obtain network arc consistency.
 
 Also contains a helper function, revise, to prune any
 pairs in which the constraint is not held. 
@@ -33,7 +34,7 @@ def AC3(csp, queue=None, removals=None):
         (xi, xj) = queue.pop()  # get binary constraint
         # Return false if a variable is found to have no domains in curr_domains
         if revise(csp, xi, xj, removals):
-            if csp.curr_domains[xi] is None:
+            if not csp.curr_domains[xi]:
                 return False
             # Remove xj from xi's neighbors, add
             # every other neighbor to the queue, then add
