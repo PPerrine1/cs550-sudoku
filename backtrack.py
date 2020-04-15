@@ -33,7 +33,7 @@ def backtracking_search(csp,
         csp should be in a goal state.
         """
 
-        # Checks if the assignmen is already complete
+        # Checks if the assignment is already complete
         if len(assignment) == 81:
             return assignment
 
@@ -42,8 +42,9 @@ def backtracking_search(csp,
         if var is None:
             return assignment
 
-        # For every domain value of the unassisnged variable, determine the conflicts,
-        # create the list of inferences, and remove any that fail the constraint
+        # For every domain value of the unassigned variable,
+        # determine the conflicts, create the list of inferences,
+        # and remove any that fail the constraint
         for value in order_domain_values(var, assignment, csp):
             if csp.nconflicts(var, value, assignment) == 0:
                 csp.assign(var, value, assignment)
@@ -52,23 +53,26 @@ def backtracking_search(csp,
                 removals = csp.suppose(var, value)
                 inferences = inference(csp, var, value, assignment, removals)
 
-                # If inferences are found, deteremine a partial assignment add it to the
-                # assignment and call backtrack recursively on the new assignment
+                # If inferences are found, determine a partial assignment,
+                # add it to the assignment, and call backtrack recursively
+                # on the new assignment
                 if inferences:
                     infer = csp.infer_assignment()[var]
                     csp.assign(var, infer, assignment)
                     curr_result = backtrack(assignment)
 
-                    # If the assignment was successful, return it. Else, remove it
+                    # If the assignment was successful, return it.
+                    # Else, continue.
                     if curr_result:
                         return curr_result
 
-                # either value inconsistent or further exploration failed
-                # restore assignment to its state at top of loop and try next value
+                # Value inconsistent / further exploration failed.
+                # Restore assignment to its state at top of loop
+                # and try next value (continue loop)
                 csp.unassign(var, assignment)
                 csp.restore(removals)
 
-        # No value was consistent with the constraints
+        # If no value was consistent with the , return none
         return None
 
     # Call with empty assignments, variables accessed
@@ -77,6 +81,7 @@ def backtracking_search(csp,
     result = backtrack({})
 
     # Determine the validity of the generated assignment
+    # If a valid solution or no solution found, return result respectively
     success = csp.goal_test(result)
     assert result is None or csp.goal_test(result)
     return result

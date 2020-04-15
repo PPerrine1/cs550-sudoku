@@ -24,16 +24,23 @@ for puzzle in [easy1, harder1]:
     s.display(s.infer_assignment())  # Display initial puzzle state
     print("")
 
-    # Test if initial state has arc consistency
+    # Utilize AC3 algorithm to solve puzzle
     AC3(s)
 
-    # If AC3 failed (likely), run backtract search to solve puzzle
-    if not s.goal_test(s.curr_domains):
-        print("Initial AC3 failed. Running a backtracking search to solve puzzle:")
-        solution = backtracking_search(s, select_unassigned_variable=mrv,
-                                       inference=mac)
-    else:
-        print("After AC3 constraint propagation:")
-   
+    print("After AC3 constraint propagation:")
     # Display solved puzzle
     s.display(s.infer_assignment())
+
+    # If AC3 fails, run backtracking search to solve puzzle
+    if not s.goal_test(s.curr_domains):
+        print("")
+        print("AC3 constraint propagation failed.")
+        print("Running a backtracking search to solve puzzle.")
+        solution = backtracking_search(s, select_unassigned_variable=mrv,
+                                       inference=mac)
+        if solution:
+            print("Backtracking search successful:")
+        else:
+            print("Backtracking search failed.")
+
+        s.display(s.infer_assignment())

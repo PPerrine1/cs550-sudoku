@@ -14,11 +14,12 @@ CS 550, Spring 2020, Marie Roch
 @author: mroch, nmill, pperr
 """
 
+
 def AC3(csp, queue=None, removals=None):
     """AC3 constraint propagation"""
 
     # If there is no given queue, populate the queue using 
-    # the neightbors list from the CSP
+    # the neighbors list from the CSP
     if not queue:
         queue = []
         for i in csp.neighbors:
@@ -32,13 +33,15 @@ def AC3(csp, queue=None, removals=None):
     # Iterate through the queue to call revise on each binary constraint.
     while queue:
         (xi, xj) = queue.pop()  # get binary constraint
-        # Return false if a variable is found to have no domains in curr_domains
+
+        # Return false if Xi is found to have no elements in curr_domains
+        # after revise() is called.
         if revise(csp, xi, xj, removals):
             if not csp.curr_domains[xi]:
                 return False
-            # Remove xj from xi's neighbors, add
-            # every other neighbor to the queue, then add
-            # xj back to the list of xi's neightbors
+            # If revise() returns True and there are elements in curr_domains,
+            # Remove Xj from Xi's neighbors, then add binary constraint (Xk, Xi)
+            # to the queue for each Xk in Xi, add Xj back to Xi's neighbors
             else:
                 csp.neighbors[xi].remove(xj)
                 for xk in csp.neighbors[xi]:
@@ -52,17 +55,16 @@ def revise(csp, xi, xj, removals):
 
     revised = False
 
-    # For every domain value of xi, verify the constraint 
-    # with every domain value of xj. 
+    # For each domain value of Xi, verify the constraint holds with
+    # at least 1 domain value in Xj. If not, delete the value from Xi's domain
     for x in csp.curr_domains[xi][:]:
         conHeld = False
         for y in csp.curr_domains[xj][:]:
             conHeld = csp.constraints(xi, x, xj, y)
             if conHeld:
                 break
-        # Prune any pair in which the constraint is not held. 
+        # Prune any domain value of Xi in which the constraint is not held.
         if not conHeld:
             csp.prune(xi, x, removals)
             revised = True
     return revised
-
