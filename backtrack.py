@@ -43,31 +43,41 @@ def backtracking_search(csp,
         Returns None if there is no solution.  Otherwise, the
         csp should be in a goal state.
         """
+        infer = None
+        removals = None
+        var = select_unassigned_variable(assignment, csp)
 
-        if select_unassigned_variable is None:
+        if var is None:
             return assignment
-        
-        var = select_unassigned_variable(csp, assignment)
+
         for value in order_domain_values(var, assignment, csp):
-            if not nconflicts(var, value, assignment):
-                assignment.add({var = value})
+            if csp.nconflicts(var, value, assignment) == 0:
+                assignment[var] = value
                 # propagate new constraints (will work without, but probably slowly)
                 # What is an inference??
-                inferences = inference(csp, var, assignment)
+                removals = csp.suppose(var, value)
+                inferences = inference(csp, var, value, assignment, removals)
                 if inferences:
-                    assignment.add(inferences)
-                    result = backtrack(assignment, csp)
-                    if result: 
-                        return result
+                    infer = {var: i for i in csp.choices(var)}
+                    assignment.update(infer)
+                    curr_result = backtrack(assignment)
+                    if curr_result:
+                        return curr_result
         # either value inconsistent or further exploration failed
         # restore assignment to its state at top of loop and try next value
-        assignment.remove({var = value}, inferences)
+            if infer and assignment:
+                for i in infer:
+                    assignment.pop(i)
+                csp.restore(removals)
         # No value was consistent with the constraints
-        return failure
+        return None
 
     # Call with empty assignments, variables accessed
     # through dynamic scoping (variables in outer
     # scope can be accessed in Python)
     result = backtrack({})
+
+    success = csp.goal_test(result)
+    csp.display(csp.infer_assignment())
     assert result is None or csp.goal_test(result)
     return result

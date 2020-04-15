@@ -6,7 +6,7 @@ from queue import Queue
 import copy
 
 
-def AC3(sudoku, queue=None, removals=None):
+def AC3(csp, queue=None, removals=None):
     """AC3 constraint propagation
     
     Pseudocode:
@@ -31,27 +31,22 @@ def AC3(sudoku, queue=None, removals=None):
                         q.enqueue(Xk, Xi)
         return True
     """
-    q = Queue()
-    unitList = [sudoku.boxes, sudoku.rows, sudoku.cols]
+    if not queue:
+        queue = Queue()
+    if not removals:
+        removals = []
 
-    for unit in unitList:
-        for u in unit:
-            for i, val in enumerate(u):
-                if val == 0:
-                    cpyU = copy.deepcopy(u)
-                    cpyU.pop(i)
-                    for j in cpyU:
-                        q.put(u(i), u(j))
-    while not q.empty():
-        (xi, xj) = q.get()  # get binary constraint
-        if revise(sudoku.csp, xi, xj):
-            if sudoku.csp.domains(xi) is None:
+    for i in csp.neighbors:
+        for j in csp.neighbors[i]:
+            queue.put(i, j)
+    while not queue.empty():
+        (xi, xj) = queue.get()  # get binary constraint
+        if revise(csp, xi, xj):
+            if csp.domains(xi) is None:
                 return False
             else:
-                cpyNeighbors = copy.deepcopy(sudoku.csp.neighbors)
-                cpyNeighbors.remove(xj)
-                for xk in cpyNeighbors:
-                    q.put(xk, xi)
+                for xk in {csp.neighbors[xi] - xj}:
+                    queue.put(xk, xi)
     return True
 
     """
@@ -69,14 +64,14 @@ def AC3(sudoku, queue=None, removals=None):
 
 def revise(csp, xi, xj):
     revised = False
-    for x in csp.domains(xi):
+    for x, v in enumerate(csp.domains[xi]):
         conHeld = False
-        for y in csp.domains(xj):
-            conHeld = (x != y)
+        for y, val in enumerate(csp.domains[xj]):
+            conHeld = csp.constraints(None, v, None, val)
             if conHeld:
                 break
         if not conHeld:
-            csp.domains(xi).remove(x)
+            csp.removals.put(csp.domains[xi].pop(x))
             revised = True
     return revised
 

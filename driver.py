@@ -5,4 +5,6 @@ from backtrack import backtracking_search
 
 for puzzle in [easy1, harder1]:
     s = Sudoku(puzzle)  # construct a Sudoku problem
-    raise NotImplemented
+    s.display(s.infer_assignment())
+    solution = backtracking_search(s)
+    print(solution)
